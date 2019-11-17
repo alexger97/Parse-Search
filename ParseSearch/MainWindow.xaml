@@ -1,0 +1,49 @@
+﻿<Window x:Class="ParseSearch.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ParseSearch"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="7*"/>
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <RadioButton x:Name="g" Content="Поиск в Google.ru" GroupName="selectSearch" FontSize="18" IsChecked="{Binding UseGoogleSearhOnly,Mode=TwoWay}"/>
+                    <RadioButton Content="Поиск в Yandex.ru" GroupName="selectSearch" FontSize="18" IsChecked="{Binding UseYandexSearhOnly,Mode=TwoWay}"/>
+                    <RadioButton Content="Поиск в Bing.ru"   GroupName="selectSearch" FontSize="18" IsChecked="{Binding UseBingSearhOnly,Mode=TwoWay}"/>
+                    <RadioButton Content="Поиск в трех поисковиках"   GroupName="selectSearch" FontSize="18" IsChecked="{Binding UseAllSearch,Mode=TwoWay}" />
+                </StackPanel>
+                <Button HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="25"  Grid.Column="1" Content="Поиск" Command="{Binding ClicSearch}"/>
+            </Grid>
+           
+            
+        </Grid>
+        <Grid Grid.Row="1">
+            <ListView ItemsSource="{Binding SearchResults}">
+                <ListView.View>
+                    <GridView>
+                        <GridView.Columns>
+                            <GridViewColumn Width="200" Header="Заголовок"  DisplayMemberBinding="{Binding MainText}"/>
+                            <GridViewColumn Width="200" Header="Описание"  DisplayMemberBinding="{Binding Description}"/>
+                            <GridViewColumn Width="200" Header="Ссылка"  DisplayMemberBinding="{Binding Link}"/>
+                        </GridView.Columns>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Grid>
+    </Grid>
+</Window>
