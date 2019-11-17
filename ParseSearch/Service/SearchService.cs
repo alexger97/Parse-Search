@@ -13,22 +13,19 @@ namespace ParseSearch.Service
 {
     public class SearchService
     {
-        public SearchService()
+      
+
+        static System.Net.WebClient wc;
+
+       
+        public List<SearchElementResult> SearchGoogle(string request)
         {
-            SearchResults = new List<SearchElementResult>();
-        }
-
-
-        public List<SearchElementResult> SearchResults { get; set; }
-        public void SearchGoogle()
-        {
-
-
-            System.Net.WebClient wc = new System.Net.WebClient();
+ 
+            wc = new System.Net.WebClient();
 
             //wc.Encoding = Encoding.UTF8;
             var urlSearch = "https://www.google.ru/search?q=";
-            string url = urlSearch + HttpUtility.UrlEncode("такси дешево спб ") + "&ie=UTF-8&num=10";
+            string url = urlSearch + HttpUtility.UrlEncode(request) + "&ie=UTF-8&num=10";
             string response = wc.DownloadString(url);
             HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
 
@@ -39,31 +36,14 @@ namespace ParseSearch.Service
             List<string> lsit = new List<string>();
 
             var main = doc.DocumentNode.SelectNodes("//div[@id=\"main\"]");
-            var mw = doc.DocumentNode.SelectNodes("//div[@class=\"mw\"]");
-            var mw2 = doc.DocumentNode.SelectNodes(".//div[@class=\"ZINbbc\"]");
-
-            //foreach (var item in main[0].ChildNodes)
-            //// {
-            //   if (item.Name == "div")
-            // Console.WriteLine(item.GetAttributeValue("class", "").Equals("ZINbbc xpd O9g5cc uUPGi"));
-            // }
-            //   Console.WriteLine(item.GetAttributeValue("class",""));
-
-
-            var yy = main[0].ChildNodes.Where(x => x.Name == "div" && !x.GetAttributeValue("class", "").Equals("ZINbbc xpd O9g5cc uUPGi"));//&&x.Attributes
-
-
-            var Results = yy.ToList();
-            // Results.RemoveRange(0, 3);
-
-            var opp = Results.Where(x => x.ChildNodes.Count == 1 && x.ChildNodes[0].GetAttributeValue("class", "").Equals("ZINbbc xpd O9g5cc uUPGi") && x.ChildNodes[0].ChildNodes.Count == 3);
-            //.Exists(z => z.Attributes[0].Value == "\"BUybKe\""));
-            //  Results.RemoveRange(0, 2);
-
-            //Results.RemoveRange(Results.Count - 3, 2);
-
+  
+            var f1 = main[0].ChildNodes.Where(x => x.Name == "div" && !x.GetAttributeValue("class", "").Equals("ZINbbc xpd O9g5cc uUPGi")).ToList(); 
+ 
+            var Results = f1.Where(x => x.ChildNodes.Count == 1 && x.ChildNodes[0].GetAttributeValue("class", "").Equals("ZINbbc xpd O9g5cc uUPGi") && x.ChildNodes[0].ChildNodes.Count == 3);       
+            
             int i = 0;
-            foreach (var result in opp)
+            List<SearchElementResult> SearchResultsLocal = new List<SearchElementResult>();
+            foreach (var result in Results)
             {
 
                 var s0 = result.ChildNodes[0];
@@ -71,14 +51,13 @@ namespace ParseSearch.Service
                 var smaldescription = (string)s0.ChildNodes[0].ChildNodes[0].ChildNodes[0].InnerText;
                 var link = s0.ChildNodes[0].ChildNodes[0].ChildNodes[1].InnerText;
 
-                //var uy= s0.ChildNodes[2].SelectNodes(".//div[@class=\"BNeawe *\"]");
                 var backdescription = s0.ChildNodes[2].ChildNodes[0].ChildNodes[0].ChildNodes[0].ChildNodes[0].ChildNodes[0].InnerText;
 
-                var ss1 = s0.ChildNodes[0].ChildNodes[0].Attributes["href"].Value;
+                // var ss1 = s0.ChildNodes[0].ChildNodes[0].Attributes["href"].Value;
 
 
-                SearchResults.Add(new SearchElementResult() { MainText = smaldescription, Description = backdescription, Link = link });
-                MessageBox.Show(smaldescription + backdescription + link);
+                SearchResultsLocal.Add(new SearchElementResult() { MainText = smaldescription, Description = backdescription, Link = link });
+                //MessageBox.Show(smaldescription + backdescription + link);
 
                 /*  Console.WriteLine("****");
             Console.WriteLine(++i);
@@ -88,6 +67,7 @@ namespace ParseSearch.Service
             Console.ReadLine();*/
 
             }
+            return SearchResultsLocal;
 
         }
         public void YaSearch()

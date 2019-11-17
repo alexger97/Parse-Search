@@ -30,13 +30,13 @@
                 </Grid.RowDefinitions>
                 <TextBlock Text="Поиск по сохраненным запросам " FontWeight="Light" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.ColumnSpan="2" FontSize="25" />
                 <TextBlock Grid.Row="1" Grid.Column="0" FontWeight="Light" Text="Исходный запрос" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                <TextBox Grid.Row="1" Grid.Column="1" FontWeight="Light" HorizontalAlignment="Stretch" VerticalAlignment="Center" FontSize="20" />
+                <TextBox Grid.Row="1" Grid.Column="1" FontWeight="Light" HorizontalAlignment="Stretch" VerticalAlignment="Center" Text="{Binding SearchText,Mode=OneWayToSource,UpdateSourceTrigger=PropertyChanged}" FontSize="20" />
                 <TextBlock FontWeight="Regular" Grid.Row="2" Grid.ColumnSpan="2" Text="Полученные результаты поиска" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="25"/>
             </Grid>
             <Grid  Grid.Row="1">
                 <StackPanel>
-                  
-                    <ListView  Margin="0,0,15,0" >
+
+                    <ListView  Margin="0,0,15,0" ItemsSource="{Binding SearchElementResults}" >
                         <ListView.View>
                             <GridView>
                                 <GridView.Columns>
@@ -68,12 +68,12 @@
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Row="2" FontSize="25" FontWeight="Regular" Text="Сохраненные запросы" HorizontalAlignment="Center" VerticalAlignment="Center"   />
             </Grid>
-            
-            <ListView Grid.Row="1" Margin="15,0,15,0">
-                <ListView.View>
-                    <GridView>
-                        <GridView.Columns>
-                            <GridViewColumn Width="150"  Header="Запрос" DisplayMemberBinding="{Binding Request}" />
+
+            <ListView Grid.Row="1" Margin="15,0,15,0" ItemsSource="{Binding SearchResults}" SelectedItem="{Binding CurrentSearchResult,Mode=OneWayToSource,UpdateSourceTrigger=PropertyChanged}">
+                <ListView.View >
+                    <GridView >
+                        <GridView.Columns >
+                            <GridViewColumn Width="150"  Header="Запрос" DisplayMemberBinding="{Binding Request}"  />
                             <GridViewColumn Header="Дата" DisplayMemberBinding="{Binding SearchTime}" />
                             <GridViewColumn  Width="150" Header="Система" DisplayMemberBinding="{Binding TypeOfSeacrhMachine}"  />
                         </GridView.Columns>

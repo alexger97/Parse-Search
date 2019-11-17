@@ -61,6 +61,10 @@
 
         </Grid>
         <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="9*"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
             <ListView ItemsSource="{Binding SearchResults}">
                 <ListView.View>
                     <GridView>
@@ -72,6 +76,8 @@
                     </GridView>
                 </ListView.View>
             </ListView>
+            <Button Grid.Row="1"  HorizontalAlignment="Center" Command="{Binding ClicSave}"  VerticalAlignment="Center" Content="Сохранить в базу запросов" Background="Green" />
+            
         </Grid>
     </Grid>
 </Page>

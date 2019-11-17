@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ParseSearch.Model;
+using SQLite.CodeFirst;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -7,32 +9,26 @@ using System.Threading.Tasks;
 
 namespace ParseSearch.Repository
 {
-    public class RepositoryContext : DbContext
+    public class LocalRepository : DbContext
     {
-        private string _databasePath;
+        
 
 
-        public DbSet<InstrumentNomenclature> InstrumentNomenclatures { get; set; }
-        public DbSet<MaterialNomenclature> MaterialNomenclatures { get; set; }
-        public DbSet<InstrumnetHeader> InstrumentHeaders { get; set; }
-
-        public DbSet<ElementInstrumentToUpload> InventoryListInstrumentToUpdate { get; set; }
-        public DbSet<ElementMaterialToUpload> InventoryListMaterialToUpdate { get; set; }
+         public DbSet<SearchResult> SearchResults { get; set; }
 
 
-        public DbSet<InventoryObject> InventoryObjects { get; set; }
-
-        public DbSet<User> Users { get; set; }
-        public AppDataBaseContext(string databasePath)
+        public LocalRepository()
+         : base("DefaultConnection") 
         {
-            _databasePath = databasePath;
-            // Database.EnsureDeleted();
-            Database.EnsureCreated();
+           // Database.Delete();
+            Database.CreateIfNotExists();
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+       /* protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
+            var sqliteConnectionInitializer = new SqliteCreateDatabaseIfNotExists<RepositoryContext>(modelBuilder);
+            Database.SetInitializer(sqliteConnectionInitializer);
+        } */
 
-            optionsBuilder.UseSqlite($"Data Source={_databasePath}");
-        }
     }
+}
