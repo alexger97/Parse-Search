@@ -1,4 +1,6 @@
-﻿using ParseSearch.ViewModel;
+﻿using ParseSearch.Service;
+using ParseSearch.View;
+using ParseSearch.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -17,8 +19,14 @@ namespace ParseSearch
 
         protected override void OnStartup(StartupEventArgs e)
         {
-           
-            var MainWindow = new MainWindow() { DataContext = new MainViewModel(new Service.SearchService()) };
+
+            SearchService searchService = new SearchService();
+            AddSearchViewModel addSearchViewModel = new AddSearchViewModel(searchService);
+            HistorySearchViewModel historySearchViewModel = new HistorySearchViewModel();
+
+            AddSearchPage addSearchPage = new AddSearchPage() { DataContext = addSearchViewModel };
+            HistorySearchPage historySearchPage = new HistorySearchPage() { DataContext = historySearchViewModel };
+            var MainWindow = new MainWindow() { DataContext = new MainViewModel(addSearchPage, historySearchPage)  };
             MainWindow.Show();
 
 

@@ -13,17 +13,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ParseSearch
+namespace ParseSearch.View
 {
     /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
+    /// Логика взаимодействия для HistorySearchPage.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class HistorySearchPage : Page
     {
-        public MainWindow()
+        public HistorySearchPage()
         {
             InitializeComponent();
-            
         }
     }
 }

@@ -1,78 +1,56 @@
 ﻿using ParseSearch.Model;
 using ParseSearch.Service;
+using ParseSearch.View;
 using ParseSearch.ViewModel.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace ParseSearch.ViewModel
 {
     public class MainViewModel : ViewModelBase 
     {
-        public MainViewModel(SearchService searchService) => SearchService = searchService;
-        public SearchService SearchService;
-
-        #region typeSearch
-        private bool useYandexSearhOnly;
-        public  bool UseYandexSearhOnly { get => useYandexSearhOnly; set { useYandexSearhOnly = value;if (value) SetChange(1); OnPropertyChanged("UseYandexSearhOnly"); } }
-      
-        private bool useGoogleSearhOnly;
-        public bool UseGoogleSearhOnly { get => useGoogleSearhOnly; set { useGoogleSearhOnly = value; if (value) SetChange(2); OnPropertyChanged("UseGoogleSearhOnly"); } }
-
-        private bool useBingSearhOnly;
-        public bool UseBingSearhOnly { get => useBingSearhOnly; set { useBingSearhOnly = value; if (value) SetChange(3); OnPropertyChanged("UseBingSearhOnly"); } }
-
-        private bool useAllSearch;
-        public bool UseAllSearch { get => useAllSearch; set { useAllSearch = value; if (value) SetChange(4); OnPropertyChanged("UseAllSearch"); } }
-
-        private void SetChange(int i)
+        public MainViewModel(AddSearchPage addSearchPage, HistorySearchPage historySearchPage)
         {
-            if (i == 1) { UseBingSearhOnly = UseGoogleSearhOnly = UseAllSearch = false; }
-            if (i == 2) { UseYandexSearhOnly = UseBingSearhOnly = UseAllSearch = false; }
-            if (i == 3) { UseYandexSearhOnly = UseGoogleSearhOnly = UseAllSearch = false; }
-            if (i == 4) { UseYandexSearhOnly = UseGoogleSearhOnly = UseBingSearhOnly = false; }
-
+            AddSearchPage = addSearchPage;
+            HistorySearchPage = historySearchPage;
+            CurrentPage = AddSearchPage;
         }
-        #endregion
 
+        public AddSearchPage AddSearchPage { get; set; }
 
-        public List<SearchResult> SearchResults 
+        public HistorySearchPage HistorySearchPage { get; set; }
+
+        private Page currentPage;
+        public Page CurrentPage { get => currentPage; set { currentPage = value; OnPropertyChanged("CurrentPage"); } }
+
+        RelayCommand _clicSelect;
+        public RelayCommand ClicSelect
         {
             get
             {
-              return   SearchService.SearchResults;
-            }
-        
-        }
-
-
-
-        RelayCommand _clicSearch;
-        public RelayCommand ClicSearch
-        {
-            get
-            {
-                if (_clicSearch == null)
+                if (_clicSelect == null)
                 {
-                    _clicSearch = new RelayCommand(ExecuteClicSearch, CanExecuteClicSearch);
+                    _clicSelect = new RelayCommand(ExecuteClicSelect, (o) => true) ;
                 }
-                return _clicSearch;
+                return _clicSelect;
             }
         }
 
-        public void ExecuteClicSearch(object parameter)
+        public void ExecuteClicSelect(object parameter)
         {
+            int par = System.Convert.ToInt32(parameter);
+            if(par==1)CurrentPage = AddSearchPage;
+            if(par==2)CurrentPage = HistorySearchPage;
 
-            SearchService.SearchGoogle();
-            OnPropertyChanged("SearchResults");
-        }
-        public bool CanExecuteClicSearch(object parameter)
-        {
-            return true;
-        }
 
+            //SearchService.YaSearch();
+            //OnPropertyChanged("SearchResults");
+        }
+        
 
     }
 }

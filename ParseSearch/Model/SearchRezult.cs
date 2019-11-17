@@ -6,18 +6,15 @@ using System.Threading.Tasks;
 
 namespace ParseSearch.Model
 {
-    public class SearchResult
+  public class SearchResult
     {
         public int Id { get; set; }
 
-        public string MainText { get; set; }
+        public string Request { get; set; }
 
-        public string Description { get; set; }
+        public List<SearchElementResult> SearchElementResults { get; set; }
 
-        public string Link { get; set; }
-
+        public DateTime SearchTime { get; set; }
         public TypeOfSeacrhMachine TypeOfSeacrhMachine { get; set; }
-
-
     }
 }

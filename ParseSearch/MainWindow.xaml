@@ -5,45 +5,30 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ParseSearch"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="800" Width="1300" 
+         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+     TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+     TextElement.FontWeight="Regular"
+     TextElement.FontSize="13"
+     TextOptions.TextFormattingMode="Ideal"
+     TextOptions.TextRenderingMode="Auto"
+     Background="{DynamicResource MaterialDesignPaper}"
+     FontFamily="{DynamicResource MaterialDesignFont}">
+
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="3*"/>
-            <RowDefinition Height="7*"/>
-        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition  Width="300"/>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
         <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Grid Grid.Column="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <StackPanel>
-                    <RadioButton x:Name="g" Content="Поиск в Google.ru" GroupName="selectSearch" FontSize="18" IsChecked="{Binding UseGoogleSearhOnly,Mode=TwoWay}"/>
-                    <RadioButton Content="Поиск в Yandex.ru" GroupName="selectSearch" FontSize="18" IsChecked="{Binding UseYandexSearhOnly,Mode=TwoWay}"/>
-                    <RadioButton Content="Поиск в Bing.ru"   GroupName="selectSearch" FontSize="18" IsChecked="{Binding UseBingSearhOnly,Mode=TwoWay}"/>
-                    <RadioButton Content="Поиск в трех поисковиках"   GroupName="selectSearch" FontSize="18" IsChecked="{Binding UseAllSearch,Mode=TwoWay}" />
-                </StackPanel>
-                <Button HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="25"  Grid.Column="1" Content="Поиск" Command="{Binding ClicSearch}"/>
-            </Grid>
-           
-            
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Button Grid.Row="0" Command="{Binding ClicSelect}" CommandParameter="1" HorizontalAlignment="Center" Content="Сделать запрос" FontSize="25" VerticalAlignment="Center" Height="45" Margin="43,176,28,164" Width="229"/>
+            <Button Grid.Row="1" Command="{Binding ClicSelect}" CommandParameter="2"  HorizontalAlignment="Center" Content="История" FontSize="25" VerticalAlignment="Center" Height="41" Margin="84,176,73,167" Width="143"/>
         </Grid>
-        <Grid Grid.Row="1">
-            <ListView ItemsSource="{Binding SearchResults}">
-                <ListView.View>
-                    <GridView>
-                        <GridView.Columns>
-                            <GridViewColumn Width="200" Header="Заголовок"  DisplayMemberBinding="{Binding MainText}"/>
-                            <GridViewColumn Width="200" Header="Описание"  DisplayMemberBinding="{Binding Description}"/>
-                            <GridViewColumn Width="200" Header="Ссылка"  DisplayMemberBinding="{Binding Link}"/>
-                        </GridView.Columns>
-                    </GridView>
-                </ListView.View>
-            </ListView>
-        </Grid>
+        <Frame Background="White" Grid.Column="1" Content="{Binding CurrentPage }" NavigationUIVisibility="Hidden" />
+
     </Grid>
 </Window>

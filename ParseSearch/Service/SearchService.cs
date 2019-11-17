@@ -2,6 +2,7 @@
 using ParseSearch.Model;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,15 +11,15 @@ using System.Windows;
 
 namespace ParseSearch.Service
 {
-  public  class SearchService
+    public class SearchService
     {
         public SearchService()
         {
-            SearchResults = new List<SearchResult>();
+            SearchResults = new List<SearchElementResult>();
         }
 
 
-        public List<SearchResult> SearchResults { get; set; }
+        public List<SearchElementResult> SearchResults { get; set; }
         public void SearchGoogle()
         {
 
@@ -42,10 +43,10 @@ namespace ParseSearch.Service
             var mw2 = doc.DocumentNode.SelectNodes(".//div[@class=\"ZINbbc\"]");
 
             //foreach (var item in main[0].ChildNodes)
-           //// {
-             //   if (item.Name == "div")
-                   // Console.WriteLine(item.GetAttributeValue("class", "").Equals("ZINbbc xpd O9g5cc uUPGi"));
-           // }
+            //// {
+            //   if (item.Name == "div")
+            // Console.WriteLine(item.GetAttributeValue("class", "").Equals("ZINbbc xpd O9g5cc uUPGi"));
+            // }
             //   Console.WriteLine(item.GetAttributeValue("class",""));
 
 
@@ -75,21 +76,21 @@ namespace ParseSearch.Service
 
                 var ss1 = s0.ChildNodes[0].ChildNodes[0].Attributes["href"].Value;
 
-                 
-                SearchResults.Add(new SearchResult() { MainText = smaldescription, Description = backdescription, Link = link, TypeOfSeacrhMachine = TypeOfSeacrhMachine.Google });
+
+                SearchResults.Add(new SearchElementResult() { MainText = smaldescription, Description = backdescription, Link = link });
                 MessageBox.Show(smaldescription + backdescription + link);
-                    
-                    /*  Console.WriteLine("****");
-                Console.WriteLine(++i);
-                Console.WriteLine("Краткое описание :" + smaldescription);
-                Console.WriteLine("Ссылка :" + link);
-                Console.WriteLine("Полное описание :" + backdescription);
-                Console.ReadLine();*/
+
+                /*  Console.WriteLine("****");
+            Console.WriteLine(++i);
+            Console.WriteLine("Краткое описание :" + smaldescription);
+            Console.WriteLine("Ссылка :" + link);
+            Console.WriteLine("Полное описание :" + backdescription);
+            Console.ReadLine();*/
 
             }
 
         }
-        void YaSearch()
+        public void YaSearch()
         {
             System.Net.WebClient wc = new System.Net.WebClient();
 
@@ -111,7 +112,9 @@ namespace ParseSearch.Service
             if (main == null)
             {
                 image = doc.DocumentNode.SelectSingleNode(capth);
-                path = image.InnerHtml;
+                path = image.GetAttributeValue("src", "true"); ;
+
+
 
             }
             var mw = doc.DocumentNode.SelectNodes("//div[@class=\"content__left\"]");
@@ -120,14 +123,82 @@ namespace ParseSearch.Service
 
             foreach (var item in sucs)
             {
+                HtmlNode root;
+                if (item.ChildNodes[0].GetAttributeValue("class", "@").Contains("organic"))
+                {
+                    root = item.ChildNodes[0];
+                }
+                else
+                {
+                    root = item.ChildNodes[0].ChildNodes[0];
 
-                var qw = item.ChildNodes[0].ChildNodes.Where(x => x.Name == "h2").First();
-                var text = qw.ChildNodes.Where(x => x.Name == "a").First().ChildNodes.Where(x => x.Name == "div" && x.GetAttributeValue("class", "@").Equals("organic__url-text")).First();
-                Console.WriteLine(text.InnerText);
-                // if (!item.GetAttributeValue("data - 5acg","222").Equals("222"))
-                //   Console.WriteLine("yes");
+                }
+
+                var h2 = root.ChildNodes.Where(x => x.Name == "h2").First();
+                var organic__subtitle = root.ChildNodes.Where(x => x.GetAttributeValue("class", "").Contains("organic__subtitle")).First();
+                //  organic__content - wrapper
+                var organic__contentwrapper = root.ChildNodes[3];
+                var textcontainer = organic__contentwrapper.ChildNodes[0];
+                string description="";
+                if (textcontainer.ChildNodes != null)
+                {
+                    if (textcontainer.ChildNodes.Count > 0)
+                    {
+                        var exttext = textcontainer.ChildNodes[0];
+                        if (exttext.ChildNodes != null)
+                            if (exttext.ChildNodes.ToList().Exists(x => x.GetAttributeValue("class", "@").Contains("*text__full*")))
+                            {
+                                description = exttext.ChildNodes.ToList().Find(x => x.GetAttributeValue("class", "@").Equals("extended-text__full")).InnerText;
+                            }
+                        else description = textcontainer.ChildNodes[0].InnerText+ textcontainer.ChildNodes[1].InnerText;
+
+                    }
+                }
+                else description = textcontainer.InnerText;
+
+
+                var link = organic__subtitle.ChildNodes[0].InnerText;
+            
+                var text = h2.ChildNodes.Where(x => x.Name == "a").First().ChildNodes.Where(x => x.Name == "div" && x.GetAttributeValue("class", "@").Equals("organic__url-text")).First();
+                
+                Debug.WriteLine(text.InnerText);
+                Debug.WriteLine(link);
+                Debug.WriteLine(description);
             }
+
+
+
+
+            // if (!item.GetAttributeValue("data - 5acg","222").Equals("222"))
+            //   Console.WriteLine("yes");
         }
-       
+
+
+
+        public void  BingSearch()
+        {
+            System.Net.WebClient wc = new System.Net.WebClient();
+
+            wc.Encoding = Encoding.UTF8;
+            var urlSearch = "https://yandex.ru/search/?text=";
+            string url = urlSearch + HttpUtility.UrlEncode("такси дешево спб ");
+            string xPathImageCaptcha = "//td[@class='b-captcha__layout__l']//img";
+
+            string capth = "//div[@class=\"captcha__image\"]";
+            string response = wc.DownloadString(url);
+            HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+
+            doc.LoadHtml(response);
+            List<string> lsit = new List<string>();
+
+            var main = doc.DocumentNode.SelectSingleNode(".//ul[@class=\"serp-list serp-list_left_yes\"]");
+
+        }
+
+
+
+
     }
+
 }
+
