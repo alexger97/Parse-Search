@@ -12,7 +12,7 @@
      TextElement.FontSize="13"
      TextOptions.TextFormattingMode="Ideal"
      TextOptions.TextRenderingMode="Auto"
-     Background="{DynamicResource MaterialDesignPaper}"
+     Background="LightCyan"
      FontFamily="{DynamicResource MaterialDesignFont}">
 
     <Grid>
@@ -25,8 +25,10 @@
                 <RowDefinition/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <Button Grid.Row="0" Command="{Binding ClicSelect}" CommandParameter="1" HorizontalAlignment="Center" Content="Сделать запрос" FontSize="25" VerticalAlignment="Center" Height="45" Margin="43,176,28,164" Width="229"/>
-            <Button Grid.Row="1" Command="{Binding ClicSelect}" CommandParameter="2"  HorizontalAlignment="Center" Content="История" FontSize="25" VerticalAlignment="Center" Height="41" Margin="84,176,73,167" Width="143"/>
+             
+                <Button Grid.Row="0" Command="{Binding ClicSelect}"  CommandParameter="1" HorizontalAlignment="Center" BorderBrush="Blue" Content="Сделать запрос" FontSize="25" VerticalAlignment="Center" Height="45"   Background="ForestGreen" Width="229"/>
+            
+             <Button Grid.Row="1" Command="{Binding ClicSelect}" CommandParameter="2"  HorizontalAlignment="Center" Content="История" BorderBrush="Blue"  FontSize="25" VerticalAlignment="Center" Height="41"   Width="143" Background="Salmon"/>
         </Grid>
         <Frame Background="White" Grid.Column="1" Content="{Binding CurrentPage }" NavigationUIVisibility="Hidden" />
 

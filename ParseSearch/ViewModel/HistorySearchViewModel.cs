@@ -1,4 +1,5 @@
 ﻿using ParseSearch.Context;
+using ParseSearch.Interface;
 using ParseSearch.Model;
 using ParseSearch.ViewModel.Base;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ParseSearch.ViewModel
 {
-    class HistorySearchViewModel : ViewModelBase
+    class HistorySearchViewModel : ViewModelBase, IHistorySearchViewModel
     {
 
         private string searchText;

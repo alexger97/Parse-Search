@@ -4,14 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ParseSearch.Model
+namespace ParseSearch.Interface
 {
-  public  enum TypeOfSeacrhMachine
+    public interface IView
     {
-        Google,
-        Yandex,
-        Yahoo
-
-
     }
 }

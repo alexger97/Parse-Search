@@ -74,6 +74,9 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.IO.Log" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -93,12 +96,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CompositionRoot\CompositionRoot.cs" />
     <Compile Include="Context\LocalContext.cs" />
+    <Compile Include="Interface\IHistorySearchViewModel.cs" />
+    <Compile Include="Interface\IAddSearchViewModel.cs" />
+    <Compile Include="Interface\ISearchService.cs" />
+    <Compile Include="Interface\IView.cs" />
     <Compile Include="Model\SearchRezult.cs" />
     <Compile Include="Model\TypeOfSeacrhMachine.cs" />
     <Compile Include="Model\SearchElementResult.cs" />
     <Compile Include="Repository\Repository.cs" />
     <Compile Include="Service\SearchService.cs" />
+    <Compile Include="Service\ViewModelService.cs" />
     <Compile Include="ViewModel\AddSearchViewModel.cs" />
     <Compile Include="ViewModel\Base\RelayCommand.cs" />
     <Compile Include="ViewModel\HistorySearchViewModel.cs" />
@@ -149,9 +158,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="mobiles.db">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

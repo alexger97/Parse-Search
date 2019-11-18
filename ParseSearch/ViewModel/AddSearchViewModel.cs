@@ -1,4 +1,5 @@
 ﻿using ParseSearch.Context;
+using ParseSearch.Interface;
 using ParseSearch.Model;
 using ParseSearch.Service;
 using ParseSearch.ViewModel.Base;
@@ -11,12 +12,12 @@ using System.Windows;
 
 namespace ParseSearch.ViewModel
 {
-    class AddSearchViewModel:ViewModelBase
+    class AddSearchViewModel : ViewModelBase, IAddSearchViewModel
     {
-        public AddSearchViewModel(SearchService searchService) 
+        public AddSearchViewModel(ISearchService searchService)
         {
             UseGoogleSearhOnly = true;
-            SearchService = searchService; 
+            SearchService = (SearchService) searchService;
         }
         public SearchService SearchService;
 
@@ -27,34 +28,36 @@ namespace ParseSearch.ViewModel
         private bool useGoogleSearhOnly;
         public bool UseGoogleSearhOnly { get => useGoogleSearhOnly; set { useGoogleSearhOnly = value; if (value) SetChange(2); OnPropertyChanged("UseGoogleSearhOnly"); } }
 
-        private bool useBingSearhOnly;
-        public bool UseBingSearhOnly { get => useBingSearhOnly; set { useBingSearhOnly = value; if (value) SetChange(3); OnPropertyChanged("UseBingSearhOnly"); } }
+        private bool useYahooSearhOnly;
+        public bool UseYahooSearhOnly { get => useYahooSearhOnly; set { useYahooSearhOnly = value; if (value) SetChange(3); OnPropertyChanged("UseYahooSearhOnly"); } }
 
         private bool useAllSearch;
         public bool UseAllSearch { get => useAllSearch; set { useAllSearch = value; if (value) SetChange(4); OnPropertyChanged("UseAllSearch"); } }
 
         private void SetChange(int i)
         {
-            if (i == 1) { UseBingSearhOnly = UseGoogleSearhOnly = UseAllSearch = false; }
-            if (i == 2) { UseYandexSearhOnly = UseBingSearhOnly = UseAllSearch = false; }
+            if (i == 1) { UseYahooSearhOnly = UseGoogleSearhOnly = UseAllSearch = false; }
+            if (i == 2) { UseYandexSearhOnly = UseYahooSearhOnly = UseAllSearch = false; }
             if (i == 3) { UseYandexSearhOnly = UseGoogleSearhOnly = UseAllSearch = false; }
-            if (i == 4) { UseYandexSearhOnly = UseGoogleSearhOnly = UseBingSearhOnly = false; }
+            if (i == 4) { UseYandexSearhOnly = UseGoogleSearhOnly = UseYahooSearhOnly = false; }
 
         }
         #endregion
 
         #region RequestData
         private string request;
-        public string Request { get => request; set { request = value; OnPropertyChanged("Request");  } }
+        public string Request { get => request; set { request = value; OnPropertyChanged("Request"); } }
 
-       
+
         private string lastrequest;
         private DateTime lastdateTimerequest;
+        bool lastmultisearch;
+        TypeOfSeacrhMachine typeOfSeacrhMachine;
         #endregion
         private List<SearchElementResult> searchResults;
         public List<SearchElementResult> SearchResults
         {
-            get =>  searchResults;
+            get => searchResults;
 
             set
             {
@@ -80,9 +83,23 @@ namespace ParseSearch.ViewModel
 
         public void ExecuteClicSearch(object parameter)
         {
-            request = Request;
+            lastrequest = Request;
             lastdateTimerequest = DateTime.Now;
-            var rez= SearchService.SearchGoogle(Request);
+            List<SearchElementResult> rez =null;
+            if (UseYandexSearhOnly) rez =  SearchService.YaSearch(Request);
+            if (UseGoogleSearhOnly) rez =  SearchService.SearchWithGoogle(Request);
+            if (UseYahooSearhOnly)   rez = SearchService.YahooSearch(Request);
+            if (UseAllSearch) {
+               
+               var rezult= SearchService.SearchwithAll(Request);
+                rez = (List<SearchElementResult>)rezult[0];
+                typeOfSeacrhMachine = (TypeOfSeacrhMachine)rezult[1];
+                MessageBox.Show($"Самый быстрый ответ поступил от {typeOfSeacrhMachine}");
+                lastmultisearch =true;
+                 
+            }
+
+
             if (rez != null)
                 if (rez.Count > 0)
                 {
@@ -93,7 +110,7 @@ namespace ParseSearch.ViewModel
                 {
                     MessageBox.Show("Ошибка выполнения ");
                 }
-            
+
 
             OnPropertyChanged("SearchResults");
         }
@@ -109,7 +126,7 @@ namespace ParseSearch.ViewModel
         {
             get
             {
-                if (_clicSave  == null)
+                if (_clicSave == null)
                 {
                     _clicSave = new RelayCommand(ExecuteClicSave, CanExecuteClicSave);
                 }
@@ -122,7 +139,7 @@ namespace ParseSearch.ViewModel
             MessageBoxResult result = MessageBox.Show("Сохранить данные запроса ?", "Внимание", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (result == MessageBoxResult.Yes)
             {
-                LocalContext.AddResult(request,SearchResults, lastdateTimerequest,TypeOfSeacrhMachine.Google);
+                LocalContext.AddResult(request, SearchResults, lastdateTimerequest, TypeOfSeacrhMachine.Google);
                 MessageBox.Show("Данные запроса добавлены в базу");
                 Clear();
             }
@@ -130,9 +147,9 @@ namespace ParseSearch.ViewModel
         }
         public bool CanExecuteClicSave(object parameter)
         {
-            if(SearchResults!=null)
-                if (SearchResults.Count>0)
-                return true;
+            if (SearchResults != null)
+                if (SearchResults.Count > 0)
+                    return true;
             return false;
         }
 
@@ -142,7 +159,7 @@ namespace ParseSearch.ViewModel
             Request = String.Empty;
             request = string.Empty;
             SearchResults = null;
-
+ 
         }
 
 

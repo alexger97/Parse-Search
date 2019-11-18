@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ParseSearch.Interface;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,7 +19,7 @@ namespace ParseSearch.View
     /// <summary>
     /// Логика взаимодействия для HistorySearchPage.xaml
     /// </summary>
-    public partial class HistorySearchPage : Page
+    public partial class HistorySearchPage : Page, IView
     {
         public HistorySearchPage()
         {

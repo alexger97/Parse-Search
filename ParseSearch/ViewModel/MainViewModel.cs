@@ -1,4 +1,5 @@
-﻿using ParseSearch.Model;
+﻿using ParseSearch.Interface;
+using ParseSearch.Model;
 using ParseSearch.Service;
 using ParseSearch.View;
 using ParseSearch.ViewModel.Base;
@@ -13,19 +14,19 @@ namespace ParseSearch.ViewModel
 {
     public class MainViewModel : ViewModelBase 
     {
-        public MainViewModel(AddSearchPage addSearchPage, HistorySearchPage historySearchPage)
+        public MainViewModel(IView addSearchPage, IView historySearchPage)
         {
             AddSearchPage = addSearchPage;
             HistorySearchPage = historySearchPage;
             CurrentPage = AddSearchPage;
         }
 
-        public AddSearchPage AddSearchPage { get; set; }
+        public IView AddSearchPage { get; set; }
 
-        public HistorySearchPage HistorySearchPage { get; set; }
+        public IView HistorySearchPage { get; set; }
 
-        private Page currentPage;
-        public Page CurrentPage { get => currentPage; set { currentPage = value; OnPropertyChanged("CurrentPage"); } }
+        private IView currentPage;
+        public IView CurrentPage { get => currentPage; set { currentPage = value; OnPropertyChanged("CurrentPage"); } }
 
         RelayCommand _clicSelect;
         public RelayCommand ClicSelect
