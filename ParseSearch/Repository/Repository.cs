@@ -20,15 +20,11 @@ namespace ParseSearch.Repository
         public LocalRepository()
          : base("DefaultConnection") 
         {
-           // Database.Delete();
+             //Database.Delete();
             Database.CreateIfNotExists();
         }
 
-       /* protected override void OnModelCreating(DbModelBuilder modelBuilder)
-        {
-            var sqliteConnectionInitializer = new SqliteCreateDatabaseIfNotExists<RepositoryContext>(modelBuilder);
-            Database.SetInitializer(sqliteConnectionInitializer);
-        } */
+       
 
     }
 }

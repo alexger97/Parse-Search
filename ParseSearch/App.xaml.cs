@@ -23,7 +23,7 @@ namespace ParseSearch
         {
 
             CompositionRoot comroot = new CompositionRoot();
-
+            comroot.MakeViewModelService();
             var MainWindow = new MainWindow() { DataContext = new MainViewModel(comroot.MakeAddSearchPage(), comroot.MakeHistorySearchPage())  };
             MainWindow.Show();
 

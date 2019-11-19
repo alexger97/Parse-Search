@@ -77,7 +77,7 @@ namespace ParseSearch
 
         }
 
-
+        public void MakeViewModelService() { ViewModelService.AddSearchViewModel = AddSearchViewModel; ViewModelService.HistorySearchViewModel = HistorySearchViewModel; }
         public IView MakeAddSearchPage() => new AddSearchPage() { DataContext = AddSearchViewModel };
 
         public IView MakeHistorySearchPage() => new HistorySearchPage() { DataContext = HistorySearchViewModel };

@@ -48,5 +48,7 @@ namespace ParseSearch.ViewModel
             }
         }
 
+        public void Update() => OnPropertyChanged("SearchResults");
+
     }
 }

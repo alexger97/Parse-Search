@@ -52,6 +52,7 @@ namespace ParseSearch.ViewModel
         private string lastrequest;
         private DateTime lastdateTimerequest;
         bool lastmultisearch;
+ 
         TypeOfSeacrhMachine typeOfSeacrhMachine;
         #endregion
         private List<SearchElementResult> searchResults;
@@ -86,9 +87,9 @@ namespace ParseSearch.ViewModel
             lastrequest = Request;
             lastdateTimerequest = DateTime.Now;
             List<SearchElementResult> rez = null;
-            if (UseYandexSearhOnly) rez = SearchService.YaSearch(Request);
-            if (UseGoogleSearhOnly) rez = SearchService.SearchWithGoogle(Request);
-            if (UseYahooSearhOnly) rez = SearchService.YahooSearch(Request);
+            if (UseYandexSearhOnly) { rez = SearchService.YaSearch(Request); typeOfSeacrhMachine = TypeOfSeacrhMachine.Yandex; }
+            if (UseGoogleSearhOnly) { rez = SearchService.SearchWithGoogle(Request); typeOfSeacrhMachine = TypeOfSeacrhMachine.Google; }
+            if (UseYahooSearhOnly) { rez = SearchService.YahooSearch(Request); typeOfSeacrhMachine = TypeOfSeacrhMachine.Yahoo; }
             if (UseAllSearch)
             {
 
@@ -142,8 +143,9 @@ namespace ParseSearch.ViewModel
             MessageBoxResult result = MessageBox.Show("Сохранить данные запроса ?", "Внимание", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (result == MessageBoxResult.Yes)
             {
-                LocalContext.AddResult(request, SearchResults, lastdateTimerequest, TypeOfSeacrhMachine.Google);
+                LocalContext.AddResult(request, SearchResults, lastdateTimerequest, typeOfSeacrhMachine);
                 MessageBox.Show("Данные запроса добавлены в базу");
+                ViewModelService.HistorySearchViewModel.Update();
                 Clear();
             }
 
@@ -158,10 +160,11 @@ namespace ParseSearch.ViewModel
 
         public void Clear()
         {
-            SetChange(1);
+           
             Request = String.Empty;
             request = string.Empty;
             SearchResults = null;
+            lastmultisearch = false;
 
         }
 
