@@ -17,7 +17,7 @@ namespace ParseSearch.ViewModel
         public AddSearchViewModel(ISearchService searchService)
         {
             UseGoogleSearhOnly = true;
-            SearchService = (SearchService) searchService;
+            SearchService = (SearchService)searchService;
         }
         public SearchService SearchService;
 
@@ -85,22 +85,24 @@ namespace ParseSearch.ViewModel
         {
             lastrequest = Request;
             lastdateTimerequest = DateTime.Now;
-            List<SearchElementResult> rez =null;
-            if (UseYandexSearhOnly) rez =  SearchService.YaSearch(Request);
-            if (UseGoogleSearhOnly) rez =  SearchService.SearchWithGoogle(Request);
-            if (UseYahooSearhOnly)   rez = SearchService.YahooSearch(Request);
-            if (UseAllSearch) {
-               
-               var rezult= SearchService.SearchwithAll(Request);
+            List<SearchElementResult> rez = null;
+            if (UseYandexSearhOnly) rez = SearchService.YaSearch(Request);
+            if (UseGoogleSearhOnly) rez = SearchService.SearchWithGoogle(Request);
+            if (UseYahooSearhOnly) rez = SearchService.YahooSearch(Request);
+            if (UseAllSearch)
+            {
+
+                var rezult = SearchService.SearchwithAll(Request);
                 rez = (List<SearchElementResult>)rezult[0];
                 typeOfSeacrhMachine = (TypeOfSeacrhMachine)rezult[1];
                 MessageBox.Show($"Самый быстрый ответ поступил от {typeOfSeacrhMachine}");
-                lastmultisearch =true;
-                 
+                lastmultisearch = true;
+
             }
 
 
             if (rez != null)
+            {
                 if (rez.Count > 0)
                 {
                     SearchResults = rez;
@@ -110,7 +112,8 @@ namespace ParseSearch.ViewModel
                 {
                     MessageBox.Show("Ошибка выполнения ");
                 }
-
+            }
+            else { MessageBox.Show("Ошибка в получении данных. Возможно поисковик не нашел по вашему запросу данных"); }
 
             OnPropertyChanged("SearchResults");
         }
@@ -159,7 +162,7 @@ namespace ParseSearch.ViewModel
             Request = String.Empty;
             request = string.Empty;
             SearchResults = null;
- 
+
         }
 
 

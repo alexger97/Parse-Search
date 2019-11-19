@@ -32,60 +32,60 @@ namespace ParseSearch.Service
         static bool wc2First;
         static bool wc3First;
 
-        public static string Response2 { get; set; }
+
         public object[] SearchwithAll(string request)
         {
-             
+
             wc1First = wc2First = wc3First = false;
             wc1.DownloadStringCompleted += Wc11_DownloadStringCompleted;
             wc2.DownloadStringCompleted += Wc22_DownloadStringCompleted;
             wc3.DownloadStringCompleted += Wc33_DownloadStringCompleted;
 
-            wc1.DownloadStringAsync(new Uri("https://www.google.ru/search?q=") );
-            wc2.DownloadStringAsync(new Uri("http://www.cyberforum.ru/csharp-beginners/thread1820108.html") );
-            wc3.DownloadStringAsync(new Uri("http://www.cyberforum.ru/csharp-beginners/thread1820108.html") );
+            Task<string> st1 = wc1.DownloadStringTaskAsync(new Uri($"https://www.google.ru/search?q={request}"));
+            Task<string> st2 = wc2.DownloadStringTaskAsync(new Uri($"https://yandex.ru/search/?text={request}"));
+            Task<string> st3 = wc3.DownloadStringTaskAsync(new Uri($"https://search.yahoo.com/search?p={request}"));
 
 
 
-            Thread.Sleep(100000);
+            Task.WaitAll(new[] { st1, st2, st3 });
 
 
-            if (wc1First) return new object[2] { ProcessingGoogleRezult(Response2), TypeOfSeacrhMachine.Google };
-            if (wc2First) return new object[2] { ProcessingYaRezult(Response2), TypeOfSeacrhMachine.Yandex };
-            if (wc3First) return new object[2] { ProcessingYahooRezult(Response2), TypeOfSeacrhMachine.Yahoo };
+            if (wc1First) return new object[2] { ProcessingGoogleRezult(st1.Result), TypeOfSeacrhMachine.Google };
+            if (wc2First) return new object[2] { ProcessingYaRezult(st2.Result), TypeOfSeacrhMachine.Yandex };
+            if (wc3First) return new object[2] { ProcessingYahooRezult(st3.Result), TypeOfSeacrhMachine.Yahoo };
 
             return null;
         }
 
         private void Wc33_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
         {
-            Setblock(3, e.Result);
+            Setblock(3);
         }
 
         private void Wc22_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
         {
-            Setblock(2, e.Result);
+            Setblock(2);
         }
 
         private void Wc11_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
         {
-            Setblock(1, e.Result);
+            Setblock(1);
         }
 
-        void Setblock(int i,string s)
+        void Setblock(int i)
         {
             lock (block)
             {
-                if (wc1First == wc2First == wc3First== false)
+                if (wc1First == wc2First == wc3First == false)
                 {
                     if (i == 1) wc1First = true;
                     if (i == 2) wc2First = true;
                     if (i == 3) wc3First = true;
-                    Response2 = s;
+
                 }
             }
         }
-        
+
 
         #endregion
 
@@ -127,21 +127,28 @@ namespace ParseSearch.Service
                 SearchResultsLocal = new List<SearchElementResult>();
                 foreach (var result in Results)
                 {
-                    var s0 = result.ChildNodes[0];
+                    try
+                    {
+                        if(result.ChildNodes[0].ChildNodes[0].ChildNodes.ToList().Exists(x=>x.Name=="a"))
+                        { 
+                        var s0 = result.ChildNodes[0];
 
-                    var smaldescription = s0.ChildNodes[0].ChildNodes[0].ChildNodes[0].InnerText;
-                    var link = s0.ChildNodes[0].ChildNodes[0].ChildNodes[1].InnerText;
-                    var backdescription = s0.ChildNodes[2].ChildNodes[0].InnerText;
+                        var smaldescription = s0.ChildNodes[0].ChildNodes[0].ChildNodes[0].InnerText;
+                        var link = s0.ChildNodes[0].ChildNodes[0].ChildNodes[1].InnerText;
+                        var backdescription = s0.ChildNodes[2].ChildNodes[0].InnerText;
 
 
-                    SearchResultsLocal.Add(new SearchElementResult() { MainText = smaldescription, Description = backdescription, Link = link });
+                        SearchResultsLocal.Add(new SearchElementResult() { MainText = smaldescription, Description = backdescription, Link = link });
 
-                    Debug.WriteLine("****");
-                    Debug.WriteLine(++i);
-                    Debug.WriteLine("Краткое описание :" + smaldescription);
-                    Debug.WriteLine("Ссылка :" + link);
-                    Debug.WriteLine("Полное описание :" + backdescription);
-
+                        Debug.WriteLine("****");
+                        Debug.WriteLine(++i);
+                        Debug.WriteLine("Краткое описание :" + smaldescription);
+                        Debug.WriteLine("Ссылка :" + link);
+                        Debug.WriteLine("Полное описание :" + backdescription);
+                        }
+                    }
+                    finally
+                    { }
                 }
             }
             catch (Exception x)
@@ -158,7 +165,7 @@ namespace ParseSearch.Service
             string url = urlSearch + HttpUtility.UrlEncode(request);
             wc2.Encoding = Encoding.UTF8;
             string response = wc2.DownloadString(url);
-            
+
             return ProcessingYaRezult(response);
         }
         public List<SearchElementResult> ProcessingYaRezult(string response)
@@ -189,37 +196,43 @@ namespace ParseSearch.Service
 
                 foreach (var item in sucs)
                 {
-                    HtmlNode root;
-                    if (item.ChildNodes[0].GetAttributeValue("class", "@").Contains("organic"))
+                    try
                     {
-                        if (!item.ChildNodes[0].ChildNodes.ToList().Exists(x => x.GetAttributeValue("class", "@").Contains("wrapper_thumb-position")))
-                            root = item.ChildNodes[0];
-                        else root = item.ChildNodes[0].ChildNodes.ToList().Find(x => x.GetAttributeValue("class", "@").Contains("wrapper_thumb-position")).ChildNodes[1];
+
+
+                        HtmlNode root;
+                        if (item.ChildNodes[0].GetAttributeValue("class", "@").Contains("organic"))
+                        {
+                            if (!item.ChildNodes[0].ChildNodes.ToList().Exists(x => x.GetAttributeValue("class", "@").Contains("wrapper_thumb-position")))
+                                root = item.ChildNodes[0];
+                            else root = item.ChildNodes[0].ChildNodes.ToList().Find(x => x.GetAttributeValue("class", "@").Contains("wrapper_thumb-position")).ChildNodes[1];
+                        }
+                        else
+                            root = item.ChildNodes[0].ChildNodes[0];
+
+                        string descr;
+                        var h2 = root.ChildNodes.ToList().Find(x => x.Name == "h2").InnerText;
+                        var link = root.ChildNodes.ToList().Find(x => x.GetAttributeValue("class", "").Contains("organic__subtitle")).ChildNodes[0].InnerText;
+                        var organicontainer = root.ChildNodes.ToList().Find(x => x.GetAttributeValue("class", "@").Contains("organic__content-wrapper"));
+                        HtmlNode textcontainer;
+                        if (!organicontainer.ChildNodes.ToList().Exists(x => x.GetAttributeValue("class", "@").Equals("wrapper")))
+                            textcontainer = organicontainer.ChildNodes.ToList().Find(x => x.GetAttributeValue("class", "@").Contains("text-container"));
+                        else
+                        {
+                            textcontainer = organicontainer.ChildNodes.ToList().Find(x => x.GetAttributeValue("class", "@").Contains("wrapper")).ChildNodes[1];
+                        }
+                        if (textcontainer.ChildNodes.ToList().Exists(x => x.GetAttributeValue("class", "@").Equals("extended - text__full")))
+                            descr = textcontainer.ChildNodes.ToList().Find(x => x.GetAttributeValue("class", "@").Equals("extended - text__full")).InnerText;
+
+                        descr = textcontainer.InnerText;
+
+                        SearchElementResults.Add(new SearchElementResult() { Description = descr, Link = link, MainText = h2 });
+                        Debug.WriteLine(h2);
+                        Debug.WriteLine(link);
+                        Debug.WriteLine(descr);
                     }
-                    else
-                        root = item.ChildNodes[0].ChildNodes[0];
-
-                    string descr;
-                    var h2 = root.ChildNodes.ToList().Find(x => x.Name == "h2").InnerText;
-                    var link = root.ChildNodes.ToList().Find(x => x.GetAttributeValue("class", "").Contains("organic__subtitle")).ChildNodes[0].InnerText;
-                    var organicontainer = root.ChildNodes.ToList().Find(x => x.GetAttributeValue("class", "@").Contains("organic__content-wrapper"));
-                    HtmlNode textcontainer;
-                    if (!organicontainer.ChildNodes.ToList().Exists(x => x.GetAttributeValue("class", "@").Equals("wrapper")))
-                        textcontainer = organicontainer.ChildNodes.ToList().Find(x => x.GetAttributeValue("class", "@").Contains("text-container"));
-                    else
-                    {
-                        textcontainer = organicontainer.ChildNodes.ToList().Find(x => x.GetAttributeValue("class", "@").Contains("wrapper")).ChildNodes[1];
-                    }
-                    if (textcontainer.ChildNodes.ToList().Exists(x => x.GetAttributeValue("class", "@").Equals("extended - text__full")))
-                        descr = textcontainer.ChildNodes.ToList().Find(x => x.GetAttributeValue("class", "@").Equals("extended - text__full")).InnerText;
-
-                    descr = textcontainer.InnerText;
-
-                    SearchElementResults.Add(new SearchElementResult() { Description = descr, Link = link, MainText = h2 });
-                    Debug.WriteLine(h2);
-                    Debug.WriteLine(link);
-                    Debug.WriteLine(descr);
-
+                    finally
+                    { }
                 }
             }
             catch (Exception x)
@@ -259,7 +272,7 @@ namespace ParseSearch.Service
             var urlSearch = "https://search.yahoo.com/search?p=";
             string url = urlSearch + HttpUtility.UrlEncode(request);
             string response = wc3.DownloadString(url);
-     
+
             return ProcessingYahooRezult(response);
         }
 
@@ -280,16 +293,25 @@ namespace ParseSearch.Service
                 Listresults = new List<SearchElementResult>();
                 foreach (var item in workdirs)
                 {
-                    var head = item.ChildNodes[0].ChildNodes[0].InnerText;
-                    var link = item.ChildNodes[0].ChildNodes[2].InnerText;
-                    var desc = item.ChildNodes.ToList().Find(x => x.GetAttributeValue("class", "@").Contains("compText")).InnerText;
+                    try
+                    {
 
-                    Listresults.Add(new SearchElementResult() { Link = link, Description = desc, MainText = head });
-                    Debug.WriteLine("***");
-                    Debug.WriteLine(head);
-                    Debug.WriteLine(link);
-                    Debug.WriteLine(desc);
-                    Debug.WriteLine("***");
+
+                        var head = item.ChildNodes[0].ChildNodes[0].InnerText;
+                        var link = item.ChildNodes[0].ChildNodes[2].InnerText;
+                        var desc = item.ChildNodes.ToList().Find(x => x.GetAttributeValue("class", "@").Contains("compText")).InnerText;
+
+                        Listresults.Add(new SearchElementResult() { Link = link, Description = desc, MainText = head });
+                        Debug.WriteLine("***");
+                        Debug.WriteLine(head);
+                        Debug.WriteLine(link);
+                        Debug.WriteLine(desc);
+                        Debug.WriteLine("***");
+                    }
+                    finally
+                    {
+
+                    }
                 }
             }
             catch (Exception x)
