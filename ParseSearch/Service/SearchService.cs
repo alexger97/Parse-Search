@@ -76,7 +76,7 @@ namespace ParseSearch.Service
         {
             lock (block)
             {
-                if (wc1First == wc2First == wc3First == false)
+                if (wc1First == false && wc2First == false && wc3First == false)
                 {
                     if (i == 1) wc1First = true;
                     if (i == 2) wc2First = true;
@@ -129,22 +129,22 @@ namespace ParseSearch.Service
                 {
                     try
                     {
-                        if(result.ChildNodes[0].ChildNodes[0].ChildNodes.ToList().Exists(x=>x.Name=="a"))
-                        { 
-                        var s0 = result.ChildNodes[0];
+                        if (result.ChildNodes[0].ChildNodes[0].ChildNodes.ToList().Exists(x => x.Name == "a"))
+                        {
+                            var s0 = result.ChildNodes[0];
 
-                        var smaldescription = s0.ChildNodes[0].ChildNodes[0].ChildNodes[0].InnerText;
-                        var link = s0.ChildNodes[0].ChildNodes[0].ChildNodes[1].InnerText;
-                        var backdescription = s0.ChildNodes[2].ChildNodes[0].InnerText;
+                            var smaldescription = s0.ChildNodes[0].ChildNodes[0].ChildNodes[0].InnerText;
+                            var link = s0.ChildNodes[0].ChildNodes[0].ChildNodes[1].InnerText;
+                            var backdescription = s0.ChildNodes[2].ChildNodes[0].InnerText;
 
 
-                        SearchResultsLocal.Add(new SearchElementResult() { MainText = smaldescription, Description = backdescription, Link = link });
+                            SearchResultsLocal.Add(new SearchElementResult() { MainText = smaldescription, Description = backdescription, Link = link });
 
-                        Debug.WriteLine("****");
-                        Debug.WriteLine(++i);
-                        Debug.WriteLine("Краткое описание :" + smaldescription);
-                        Debug.WriteLine("Ссылка :" + link);
-                        Debug.WriteLine("Полное описание :" + backdescription);
+                            Debug.WriteLine("****");
+                            Debug.WriteLine(++i);
+                            Debug.WriteLine("Краткое описание :" + smaldescription);
+                            Debug.WriteLine("Ссылка :" + link);
+                            Debug.WriteLine("Полное описание :" + backdescription);
                         }
                     }
                     finally
